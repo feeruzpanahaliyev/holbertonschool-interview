@@ -31,4 +31,3 @@ def canUnlockAll(boxes):
        newly_opened_boxes = next_new_boxes[:]
 
    return len(accessible_boxes) == len(boxes)  # True if all boxes unlocked
-
