@@ -4,6 +4,7 @@
 Lockboxes algorithm
 '''
 
+
 def canUnlockAll(boxes):
    """
    Determines if all boxes can be unlocked using the keys found within them.
@@ -20,26 +21,14 @@ def canUnlockAll(boxes):
 
    while newly_opened_boxes:
        next_new_boxes = []
+
        for box_index in newly_opened_boxes:
            for key in boxes[box_index]:
                if key not in accessible_boxes and key < len(boxes) :
                    accessible_boxes.append(key)  # Add newly accessible box
                    next_new_boxes.append(key)  # Track for next iteration
+                   
        newly_opened_boxes = next_new_boxes[:]
 
    return len(accessible_boxes) == len(boxes)  # True if all boxes unlocked
 
-
-'''
-
-# Example usage
-boxes = [[1], [2], [3], [4], []]
-print(canUnlockAll(boxes))  # Output: True
-
-boxes = [[1, 4, 6], [2], [0, 4, 1], [5, 6, 2], [3], [4, 1], [6]]
-print(canUnlockAll(boxes))  # Output: True
-
-boxes = [[1, 4], [2], [0, 4, 1], [3], [], [4, 1], [5, 6]]
-print(canUnlockAll(boxes))  # Output: False
-
-'''
