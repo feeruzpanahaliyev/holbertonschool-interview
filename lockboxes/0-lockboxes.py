@@ -7,11 +7,6 @@ Lockboxes algorithm
 
 def canUnlockAll(boxes):
    """
-   Determines if all boxes can be unlocked using the keys found within them.
-
-   Args:
-       boxes: A list of lists, where each inner list represents the keys found in a box.
-
    Returns:
        True if all boxes can be opened, False otherwise.
    """
