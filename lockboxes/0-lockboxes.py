@@ -25,7 +25,7 @@ def canUnlockAll(boxes):
                if key not in accessible_boxes:
                    accessible_boxes.append(key)  # Add newly accessible box
                    next_new_boxes.append(key)  # Track for next iteration
-       newly_opened_boxes = next_new_boxes
+       newly_opened_boxes = next_new_boxes[:]
 
    return len(accessible_boxes) == len(boxes)  # True if all boxes unlocked
 
