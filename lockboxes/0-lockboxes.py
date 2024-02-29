@@ -30,6 +30,8 @@ def canUnlockAll(boxes):
    return len(accessible_boxes) == len(boxes)  # True if all boxes unlocked
 
 # Example usage
+
+'''
 boxes = [[1], [2], [3], [4], []]
 print(canUnlockAll(boxes))  # Output: True
 
@@ -38,3 +40,4 @@ print(canUnlockAll(boxes))  # Output: True
 
 boxes = [[1, 4], [2], [0, 4, 1], [3], [], [4, 1], [5, 6]]
 print(canUnlockAll(boxes))  # Output: False
+'''
