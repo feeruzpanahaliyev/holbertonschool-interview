@@ -25,5 +25,6 @@ typedef struct binary_tree_s
  * Return: A pointer to the new node, or NULL on failure
  */
 binary_tree_t *binary_tree_node(binary_tree_t *parent, int value);
+heap_t *heap_insert(heap_t **root, int value);
 
 #endif /* BINARY_TREES_H */
