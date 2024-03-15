@@ -46,7 +46,7 @@ void heapify(heap_t **root)
 
     if (largest != *root)
     {
-        swap_nodes(&root, &largest);
+        swap_nodes(**root, **largest);
         heapify(&largest);
     }
 }
