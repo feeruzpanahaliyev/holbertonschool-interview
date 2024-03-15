@@ -29,9 +29,8 @@ void swap_nodes(heap_t **parent, heap_t **child)
 }
 
 /**
- * heapify_up - Moves a node up the tree to maintain Max Heap property
- * @heap: Pointer to the heap
- * @node: Pointer to the inserted node
+ * heapify - Moves a node up the tree to maintain Max Heap property
+ * @root: Pointer to the root of the heap
  */
 void heapify(heap_t **root)
 {
