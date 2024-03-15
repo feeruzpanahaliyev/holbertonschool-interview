@@ -33,24 +33,22 @@ void swap_nodes(heap_t **parent, heap_t **child)
  * @heap: Pointer to the heap
  * @node: Pointer to the inserted node
  */
-void heapify_up(heap_t **heap, heap_t *node)
+void heapify(heap_t **root)
 {
-    heap_t *parent = NULL;
+    heap_t *largest = *root;
+    heap_t *left = (*root)->left;
+    heap_t *right = (*root)->right;
 
-    while (node && node->parent)
+    if (left && left->n > largest->n)
+        largest = left;
+    if (right && right->n > largest->n)
+        largest = right;
+
+    if (largest != *root)
     {
-        parent = node->parent;
-        if (node->n > parent->n)
-        {
-            swap_nodes(&parent, &node);
-            node = parent;
-        }
-        else
-            break;
+        swap((*root)->n, largest->n);
+        heapify(&largest);
     }
-
-    if (node && !node->parent && node->n > (*heap)->n)
-        *heap = node;
 }
 
 /**
@@ -60,39 +58,45 @@ void heapify_up(heap_t **heap, heap_t *node)
  *
  * Return: Pointer to the inserted node, or NULL on failure
  */
+
 heap_t *heap_insert(heap_t **root, int value)
 {
-    heap_t *new_node, *parent;
+    heap_t *node = binary_tree_node(*root, value);
 
-    if (!root)
+    if (!node)
         return (NULL);
 
-    new_node = binary_tree_node(NULL, value);
-    if (!new_node)
-        return (NULL);
-
-    if (!*root)
-    {
-        *root = new_node;
-        return (new_node);
-    }
-
-    parent = *root;
-    while (parent->left && parent->right)
-    {
-        if (binary_tree_size(parent->left) <= binary_tree_size(parent->right))
-            parent = parent->left;
-        else
-            parent = parent->right;
-    }
-
-    if (!parent->left)
-        parent->left = new_node;
+    /* Insert as a leaf */
+    if (*root == NULL)
+        *root = node;
     else
-        parent->right = new_node;
+    {
+        heap_t *parent = *root;
+        while (1)
+        {
+            if (value > parent->n)
+            {
+                if (parent->left == NULL)
+                {
+                    parent->left = node;
+                    break;
+                }
+                parent = parent->left;
+            }
+            else
+            {
+                if (parent->right == NULL)
+                {
+                    parent->right = node;
+                    break;
+                }
+                parent = parent->right;
+            }
+        }
+    }
 
-    new_node->parent = parent;
-    heapify_up(root, new_node);
+    /* Maintain heap property */
+    heapify(root);
 
-    return (new_node);
+    return (node);
 }
