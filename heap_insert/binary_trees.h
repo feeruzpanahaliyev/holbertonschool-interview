@@ -1,6 +1,11 @@
 #ifndef BINARY_TREES_H
 #define BINARY_TREES_H
 
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 /**
  * struct binary_tree_s - Binary tree node
  *
@@ -25,6 +30,14 @@ typedef struct binary_tree_s
  * Return: A pointer to the new node, or NULL on failure
  */
 binary_tree_t *binary_tree_node(binary_tree_t *parent, int value);
+
+typedef struct binary_tree_s heap_t;
+
+void binary_tree_print(const binary_tree_t *);
+binary_tree_t *binary_tree_node(binary_tree_t *parent, int value);
 heap_t *heap_insert(heap_t **root, int value);
+void heapify_up(heap_t *node);
+size_t binary_tree_height(const binary_tree_t *tree);
+int binary_tree_is_perfect(const binary_tree_t *tree);
 
 #endif /* BINARY_TREES_H */
