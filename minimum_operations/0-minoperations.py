@@ -5,7 +5,7 @@ Module to calc. the minimum number of operations to reach n characters of 'H'
 """
 
 
-def min_operations(n):
+def minOperations(n):
     """
     Calc. the minimum number of operations needed to reach n characters of 'H'.
     Args:
