@@ -94,14 +94,12 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
     int i, j;
     int toppled = 0;
 
-    // Add grid2 values to grid1
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
             grid1[i][j] += grid2[i][j];
         }
     }
 
-    // Topple until stable
     while (!is_stable(grid1)) {
         if (toppled)
             printf("=\n");
@@ -109,14 +107,13 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
         toppled = 1;
 
         int tmp_grid[3][3];
-        // Copy grid1 to tmp_grid
+
         for (i = 0; i < 3; i++) {
             for (j = 0; j < 3; j++) {
                 tmp_grid[i][j] = grid1[i][j];
             }
         }
 
-        // Topple grid1
         for (i = 0; i < 3; i++) {
             for (j = 0; j < 3; j++) {
                 if (tmp_grid[i][j] > 3)
