@@ -1,161 +1,245 @@
 #include "holberton.h"
 
 /**
- * main - multiplies two positive numbers
- * @argc: argument counter
- * @argv: argument vector
- * Return: 0
+ * main - multiplies two positive numbers, passed in as args
+ * @argc: int count of number of arguments provided to program
+ * @argv: double pointer to array with program name and arguments
+ *
+ * Return: 0 if successful, exit status of 98 on failure
  */
+
 int main(int argc, char *argv[])
 {
-	char *error = "Error\n";
-	int i;
+	unsigned int digit_count1 = 0, digit_count2 = 0, max_digit = 0, min_digit = 0;
+	unsigned int row = 0, column = 0, start = 0, i = 0, j = 0;
+	int product = 0, remainder = 0;
+	char *num1 = NULL, *num2 = NULL, **calculation = NULL, *final = NULL;
 
-	if (argc != 3 || !is_a_number(argv[1]) || !is_a_number(argv[2]))
+	if (argc != 3)
+		error();
+	digit_count1 = digit_check(argv[1]);
+	digit_count2 = digit_check(argv[2]);
+	if (digit_count1 == 0 || digit_count2 == 0)
+		error();
+	set_max_min(digit_count1, digit_count2, &max_digit, &min_digit,
+		    &num1, &num2, argv[1], argv[2]);
+	calculation = create_double(min_digit, min_digit + max_digit);
+	start = (min_digit + max_digit - 1);
+	for (i = min_digit, row = 0; i > 0; i--, row++)
 	{
-		for (i = 0; error[i] != '\0'; i++)
+		for (j = max_digit, column = start; j > 0; j--, column--)
 		{
-			_putchar(error[i]);
+			product = (num1[j - 1] - '0') * (num2[i - 1] - '0');
+			product += remainder;
+			calculation[row][column] = (product % 10) + '0';
+			remainder = product / 10;
 		}
-		exit(98);
+		calculation[row][column] = remainder + '0';
+		remainder = 0;
+		start--;
 	}
-
-	multiply(argv[1], argv[2]);
+	final = create_final(min_digit + max_digit, calculation);
+	for (i = 0; final[i]; i++)
+		_putchar(final[i]);
+	_putchar('\n');
+	for (row = 0; calculation[row]; row++)
+		free(calculation[row]);
+	free(calculation);
+	free(final);
 	return (0);
 }
 
-/*corergir lo anterior, porq solo compara el primer caracter*/
-
 /**
- * multiply - Fills an array with the multiplication num_1 times i
- * Arguments
- * @num_1:	string representing the 1st number in 10 base
- * @num_2:  string representing the 2nd number in 10 base
- * Returns - The multiplication
+ * error - prints error message and exits program
  */
 
-void multiply(char *num_1, char *num_2)
+void error(void)
 {
-	char mul[10][MAX1], answer[MAX1][MAX2];
-	int tag, i, j, len_1, len_2, res, value, pos_1, pos_2, row, z;
+	int i = 0;
+	char error[6] = "Error";
 
-	for (len_1 = str_len(num_1), len_2 = str_len(num_2), i = 0; i < 10; i++)
-		for (j = 0; j < MAX1; j++)
-			mul[i][j] = '.';
+	for (i = 0; error[i]; i++)
+		_putchar(error[i]);
+	_putchar('\n');
+	exit(98);
+}
 
-	for (i = 0; i < MAX1; i++)
-		for (j = 0; j < MAX2; j++)
-			answer[i][j] = '.';
 
-	/* 1. Creating multiplication table*/
-	for (tag = 0, i = 0; i < 10; i++)
+/**
+ * digit_check - checks if number contains only digits and
+ * counts number of digits
+ *
+ * @number: array of characters to check if digits
+ *
+ * Return: 0 on failure or number of digits in number
+ */
+
+int digit_check(char *number)
+{
+	int i = 0;
+
+	for (i = 0; number[i]; i++)
 	{
-		for (j = 0; j <= len_1; j++)
+		if (number[i] < '0' || number[i] > '9')
+			return (0);
+	}
+	return (i);
+}
+
+/**
+ * set_max_min - sets max and min numbers and digit counts
+ * @digit_count1: count of digits in first number argument
+ * @digit_count2: count of digits in second number argument
+ * @max_digit: pointer to maximum number of digits
+ * @min_digit: pointer to minimum number of digits
+ * @num1: double pointer to number with maximum digits
+ * @num2: double pointer to number with minimum digits
+ * @arg1: pointer to first number argument
+ * @arg2: pointer to second number argument
+ */
+
+void set_max_min(unsigned int digit_count1, unsigned int digit_count2,
+		 unsigned int *max_digit, unsigned int *min_digit,
+		 char **num1, char **num2, char *arg1, char *arg2)
+{
+	if (digit_count1 > digit_count2)
+	{
+		*max_digit = digit_count1;
+		*num1 = arg1;
+		*min_digit = digit_count2;
+		*num2 = arg2;
+	}
+	else
+	{
+		*max_digit = digit_count2;
+		*num1 = arg2;
+		*min_digit = digit_count1;
+		*num2 = arg1;
+	}
+}
+
+/**
+ * create_double - mallocs and initializes a double pointer (2D array)
+ *
+ * @row_size: number of rows the double pointer should have
+ * @column_size: number of columns each row should contain
+ *
+ * Return: the 2D array initialized with 0s
+ */
+
+char **create_double(unsigned int row_size, unsigned int column_size)
+{
+	char **calculation = NULL;
+	unsigned int row = 0, column = 0;
+
+	calculation = malloc(sizeof(char *) * (row_size + 1));
+	if (calculation == NULL)
+		error();
+	for (row = 0; row < row_size; row++)
+	{
+		calculation[row] = malloc(sizeof(char) * (column_size + 1));
+		if (calculation[row] == NULL)
 		{
-			pos_1 = len_1 - j - 1;
-			if (pos_1 >= 0)
-			{	res = ((num_1[pos_1] - 48) * i) + tag;
-				value = res % 10;
-				mul[i][j] = (value + '0');
-				tag = res / 10;
-			}
-			else
-			{	mul[i][j] = (tag != 0) ? tag + 48 : '.';
-				tag = 0;
-			}
+			for (; (row + 1) > 0; row--)
+				free(calculation[row]);
+			free(calculation);
+			error();
 		}
+		for (column = 0; column < column_size; column++)
+			calculation[row][column] = '0';
+		calculation[row][column] = '\0';
 	}
-
-	/* 2. Creating answer table*/
-	for (j = 0; j < len_2; j++)
-	{	pos_2 = len_2 - j - 1;
-		row = num_2[pos_2] - 48;
-		for (z = 0; z < len_1 + 1; z++)
-			answer[j][z + j] = mul[row][z];
-	}
-	sum_and_print(answer, len_1, len_2);
+	calculation[row] = NULL;
+	return (calculation);
 }
 
 /**
- * is_a_number - Indicates if a string represents a number in 10 base
- * Arguments
- * @a_str: string representing a number in 10 base
- * Return: 1 if true, 0 if not.
+ * create_final - mallocs for final calculation of product and
+ * sets values from calculations 2D array
+ *
+ * @size: maximum size needed for final array
+ * @calculation: 2D array of all intermediary calculations
+ *
+ * Return: the final array with the final product value
  */
-int is_a_number(char *a_str)
+
+char *create_final(unsigned int size, char **calculation)
 {
-	while (*a_str != '\0')
+	char *final = NULL;
+	unsigned int row = 0, column = 0, sum = 0, remainder = 0;
+
+	final = malloc(sizeof(char) * (size + 1));
+	if (final == NULL)
 	{
-		if (*a_str < '0' || *a_str > '9')
-			return (_FALSE_);
-		a_str++;
+		for (row = 0; calculation[row]; row++)
+			free(calculation[row]);
+		free(calculation);
+		error();
 	}
-	return (_TRUE_);
-}
-
-/**
- * sum_and_print - Generates the sumation and print the results
- * Arguments
- * @a:	matrix with multiplitation tables
- * @len_1: len of string 1
- * @len_2: len os string 2
- * Return: noting.
- */
-void sum_and_print(char a[MAX1][MAX2], int len_1, int len_2)
-{
-	int tag, i, j, sum, value;
-	char total[MAX2], ans[MAX2 - 1];
-	char *ar;
-
-	/* 3. Add each column from left to right */
-	tag = 0;
-	for (j = 0; j <= (len_1 + len_2); j++)
+	final[size] = '\0';
+	for (column = (size - 1); (column + 1) > 0; column--)
 	{
 		sum = 0;
-		for (i = 0; i < len_2; i++)
-			sum += (a[i][j] >= '0' && a[i][j] <= '9') ? a[i][j] - 48 : 0;
-		value = (sum + tag) % 10;   /* las digit added */
-		total[j] = (value + '0');   /* converted to*/
-		tag = (sum + tag) / 10;
-	}
-
-	/* Reverse the string */
-	for (i = 0; i < len_1 + len_2; i++)
-	{
-		ans[i] = total[len_1 + len_2 - 1 - i];
-	}
-	ans[i] = '\0';
-
-	/* remove 0-s from the left side of the string */
-	value = str_len(ans);
-	for (i = 0; i < value; i++)
-	{
-		if (ans[i] == '0')
-			ar = &ans[i + 1];
-		else
+		for (row = 0; calculation[row]; row++)
 		{
-			ar = &ans[i];
-			i = value;
+			sum += (calculation[row][column] - '0');
 		}
+		sum += remainder;
+		final[column] = (sum % 10) + '0';
+		remainder = sum / 10;
 	}
-	for (i = 0; ar[i] != '\0'; i++)
-	{
-		_putchar(ar[i]);
-	}
-	putchar('\n');
+	if (final[0] == '0')
+		final = final_realloc(final, calculation);
+	return (final);
 }
 
 /**
- * str_len - Calculates the lenght of a string
- * Arguments
- * @a:	matrix with multiplitation tables
- * Return: The lengnth of a.
+ * final_realloc - reallocates if there are any leading 0s
+ * @final: pointer to calculated final product
+ * @calculation: pointer to 2D array storing intermediary calculations
+ *
+ * Return: final product without leading 0s
  */
-int str_len(char *a)
-{
-	int i;
 
-	for (i = 0; a[i] != '\0'; i++)
-	{}
-	return (i);
+char *final_realloc(char *final, char **calculation)
+{
+	unsigned int i = 0, j = 0, leading = 0, new_size = 1;
+	char *final_realloc = NULL;
+
+	for (i = 0; final[i]; i++)
+	{
+		if (leading)
+			new_size++;
+		else if (final[i] != '0')
+			leading = 1;
+	}
+	final_realloc = malloc(sizeof(char) * (new_size + 1));
+	if (final_realloc == NULL)
+	{
+		for (i = 0; calculation[i]; i++)
+			free(calculation[i]);
+		free(calculation);
+		free(final);
+		error();
+	}
+	final_realloc[new_size] = '\0';
+	leading = 0;
+	for (i = 0; final[i]; i++)
+	{
+		if (leading)
+		{
+			final_realloc[j] = final[i];
+			j++;
+		}
+		else if (final[i] != '0')
+		{
+			leading = 1;
+			final_realloc[j] = final[i];
+			j++;
+		}
+		else if (new_size == 1)
+			final_realloc[j] = '0';
+	}
+	free(final);
+	return (final_realloc);
 }
